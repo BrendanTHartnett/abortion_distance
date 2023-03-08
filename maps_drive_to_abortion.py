@@ -5,9 +5,10 @@ import pandas as pd
 from datetime import datetime
 import googlemaps
 # Define the Google Maps API key
-gmaps = googlemaps.Client(key='AIzaSyAKiqWAENqXLewMqGgh7_7yliWw_1VhFQ0')
+gmaps = googlemaps.Client(key='YOUR KEY')
 
-dat = pd.read_csv('abortion_access_legal_clean.csv')
+#Load abortion providers dataset available by request at https://abortionfacilitydatabase-ucsf.hub.arcgis.com.
+dat = pd.read_csv('LOAD ABORTION GEOCOORDINATES')
 dat.head()
 
 # Drop all rows where state is "AK", "HI", or "PR"
@@ -45,4 +46,3 @@ for i in range(len(dat)):
     print(f"Completed request {i+1}/{len(dat)}")
 
 dat['driving_distance']
-dat.to_csv("zip_distance_to_abortions.csv")
