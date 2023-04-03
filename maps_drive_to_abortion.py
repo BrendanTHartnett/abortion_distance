@@ -4,20 +4,34 @@
 import pandas as pd
 from datetime import datetime
 import googlemaps
+import random
+import time
+
 # Define the Google Maps API key
-gmaps = googlemaps.Client(key='YOUR KEY')
+gmaps = googlemaps.Client(key='YOUR KEY', retry_over_query_limit=True)
 
-#Load abortion providers dataset available by request at https://abortionfacilitydatabase-ucsf.hub.arcgis.com.
-dat = pd.read_csv('LOAD ABORTION GEOCOORDINATES')
-dat.head()
+dat = pd.read_csv('RESTRICTED_ABORTIONS_DATA')
 
-# Drop all rows where state is "AK", "HI", or "PR"
-dat = dat[~dat['state'].isin(['AK', 'HI', 'PR'])]
+def get_directions_with_backoff(origin, destination, max_retries=5):
+    for n in range(0, max_retries):
+        try:
+            now = datetime.now()
+            directions_result = gmaps.directions(origin,
+                                                 destination,
+                                                 mode="driving",
+                                                 departure_time=now)
+            return directions_result
+        except googlemaps.exceptions._OverQueryLimit:
+            sleep_time = (2 ** n) + random.random()
+            time.sleep(sleep_time)
+    return None
+
+dat = dat.reset_index(drop=True)
 
 # Loop through each row in the dat dataframe and compute the driving distance
-for i in range(len(dat)):
+for i in range(0, len(dat)):
     # Define the coordinates for the two points
-    origin = (dat['zip_Y'][i], dat['zip_X'][i])
+    origin = (dat['LAT'][i], dat['LGT'][i])
     destination = (dat['storeLAT'][i], dat['storeLONG'][i])
 
     # Find the nearest road using the Google Maps API
@@ -43,6 +57,4 @@ for i in range(len(dat)):
     dat.at[i, 'driving_distance'] = milage
 
     # Print the current iteration number
-    print(f"Completed request {i+1}/{len(dat)}")
-
-dat['driving_distance']
+    print(f"Completed {i+1}/{len(dat)}")
