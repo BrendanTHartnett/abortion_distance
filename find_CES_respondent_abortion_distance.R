@@ -1,7 +1,5 @@
 library(readr)
 
-data_clean <- subset(data, !is.na(driving_distance))
-
 #Zipcode distances obtained from maps_drive_to_abortion.py
 zip_dat <- read_csv("zipcodes_to_abortion.csv")
 
