@@ -5,9 +5,10 @@ library(readr)
 library(rgdal)
 library(sf)
 
-dat <- read_csv("Documents/TPOL/Abortion_Distance/zipcodes_to_abortion.csv")
+dat <- read_csv("zipcodes_to_abortion.csv")
 
-zones <- read_sf("Downloads/tl_2019_us_zcta510/tl_2019_us_zcta510.shp")
+#shapefile available here: https://catalog.data.gov/dataset/tiger-line-shapefile-2019-2010-nation-u-s-2010-census-5-digit-zip-code-tabulation-area-zcta5-na 
+zones <- read_sf("tl_2019_us_zcta510/tl_2019_us_zcta510.shp")
 
 dat$numericZIPS
 fdat <- merge(zones, dat, by.x = "GEOID10", by.y = "numericZIPS")
