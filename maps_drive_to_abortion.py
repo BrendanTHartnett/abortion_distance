@@ -12,20 +12,6 @@ gmaps = googlemaps.Client(key='YOUR KEY', retry_over_query_limit=True)
 
 dat = pd.read_csv('RESTRICTED_ABORTIONS_DATA')
 
-def get_directions_with_backoff(origin, destination, max_retries=5):
-    for n in range(0, max_retries):
-        try:
-            now = datetime.now()
-            directions_result = gmaps.directions(origin,
-                                                 destination,
-                                                 mode="driving",
-                                                 departure_time=now)
-            return directions_result
-        except googlemaps.exceptions._OverQueryLimit:
-            sleep_time = (2 ** n) + random.random()
-            time.sleep(sleep_time)
-    return None
-
 dat = dat.reset_index(drop=True)
 
 # Loop through each row in the dat dataframe and compute the driving distance
